@@ -24,7 +24,7 @@ npm run dev
 
 ## back-end
 
-modify your server IP
+modify your server IP and account path
 
     backend/pkg/consts/consts.go
      
