@@ -14,7 +14,9 @@
 | collection | geth client                | kitex       | thrift rpc | backend/server/artwork |
 
 项目前端采用Vue3开发，组件库使用element plus和naive UI。
-
+<div align="center">
+  <img src="https://github.com/Zhao-LX2000/InterPlanetary-Collection-Market/frontend/src/assets/2.png">
+</div>
 项目仍处于开发阶段，不定期更新
 
 ### Feature
