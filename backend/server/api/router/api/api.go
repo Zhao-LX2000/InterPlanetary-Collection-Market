@@ -26,6 +26,12 @@ func Register(r *server.Hertz) {
 			_artwork.GET("/getTokenBalance", append(_getcollectiontokenbalanceMw(), api.GetCollectionTokenBalance)...)
 		}
 		{
+			_file := _v1.Group("/file", _fileMw()...)
+			_file.GET("/GetCollectionList", append(_getcollectionlistcollectionMw(), api.GetCollectionListCollection)...)
+			//_file.GET("/GetCollectionList", append(_getcollectionlistcollectionMw(), api.GetFileList)...)
+			_file.POST("/UploadCollection", append(_uploadcollectionMw(), api.UploadCollection)...)
+		}
+		{
 			_test := _v1.Group("/test", _testMw()...)
 			_test.GET("/testToken", append(_testtokenMw(), api.TestToken)...)
 		}
@@ -33,12 +39,6 @@ func Register(r *server.Hertz) {
 			_user := _v1.Group("/user", _userMw()...)
 			_user.POST("/login", append(_checkuserMw(), api.CheckUser)...)
 			_user.POST("/register", append(_createuserMw(), api.CreateUser)...)
-		}
-		{
-			_file := _v1.Group("/file", _userMw()...)
-			//_file.POST("/upload", api.UploadFile)
-			_file.POST("/upload", append(_fileMw(), api.UploadFile)...)
-			_file.GET("/list", api.GetFileList)
 		}
 	}
 }

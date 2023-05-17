@@ -13,6 +13,14 @@ struct User {
     4: string keystore
 }
 
+struct Collection {
+    1: string filename
+    2: string workname
+    3: string workdescription
+    4: string url
+    5: i64 price
+}
+
 //struct Note {
 //    1: i64 note_id
 //    2: i64 user_id
@@ -78,7 +86,23 @@ struct BuyCollectionResponse {
     2: i64 Nonce
 }
 
+struct UploadCollectionRequest {
+    1: Collection collection
+}
 
+struct UploadCollectionResponse {
+    1: BaseResp base_resp
+}
+
+
+struct GetCollectionListRequest {
+
+}
+
+struct GetCollectionListResponse {
+    1: list<Collection> users
+    2: BaseResp base_resp
+}
 
 service ApiService {
     CreateUserResponse CreateUser(1: CreateUserRequest req) (api.post="/v1/user/register")
@@ -91,6 +115,10 @@ service ApiService {
     GetTokenBalanceResponse GetCollectionTokenBalance(1: GetTokenBalanceRequest req) (api.get="/v1/artwork/getTokenBalance")
     //用户购买收藏品（目前只是转账）
     BuyCollectionResponse BuyCollection(1: BuyCollectionRequest req) (api.post="/v1/artwork/BuyCollection")
+
+    UploadCollectionResponse UploadCollection(1: UploadCollectionRequest req) (api.post="/v1/file/UploadCollection")
+
+    GetCollectionListResponse GetCollectionListCollection(1: GetCollectionListRequest req)(api.get="/v1/file/GetCollectionList")
 //    CreateNoteResponse CreateNote(1: CreateNoteRequest req) (api.post="/v1/note")
 //    QueryNoteResponse QueryNote(1: QueryNoteRequest req) (api.get="/v1/note/query")
 //    UpdateNoteResponse UpdateNote(1: UpdateNoteRequest req) (api.put="/v1/note/:note_id")

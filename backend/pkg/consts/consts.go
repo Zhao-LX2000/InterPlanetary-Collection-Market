@@ -16,8 +16,6 @@
 package consts
 
 const (
-	//ArtworkTableName 还没建Artwork表
-	ArtworkTableName    = "artwork"
 	UserTableName       = "user"
 	IPFSTableName       = "ipfs"
 	SecretKey           = "secret key"
@@ -27,22 +25,19 @@ const (
 	ApiServiceName      = "demoapi"
 	UserServiceName     = "testuser"
 	ArtworkServiceName  = "artwork"
-	MySQLDefaultDSN     = "gorm:1119@tcp(localhost:7712)/gorm?charset=utf8&parseTime=True&loc=Local"
-	IPFSMySQLDefaultDSN = "gorm:1119@tcp(localhost:7712)/gorm?charset=utf8&parseTime=True&loc=Local"
+	FileServiceName     = "file"
+	MySQLDefaultDSN     = "gorm:1119@tcp(43.136.22.7:7712)/gorm?charset=utf8&parseTime=True&loc=Local"
+	IPFSMySQLDefaultDSN = "gorm:1119@tcp(43.136.22.7:7712)/gorm?charset=utf8&parseTime=True&loc=Local"
 	//GethURL 填你的geth
-	GethURL            = "http://localhost:8545"
-	TCP                = "tcp"
-	UserServiceAddr    = ":9000"
-	ArtworkServiceAddr = ":11000"
-	NoteServiceAddr    = ":10000"
-	ExportEndpoint     = ":4317"
-	ETCDAddress        = "localhost:2379"
-	DefaultLimit       = 10
-	//CollectionTokenSOlAddress 收藏币合约的地址
-	TokenSOlAddress           = "0x21dC5f46601683789d4e30c78675312d0D7c4cB8"
-	CollectionTokenSOlAddress = "0x6fD056Deb2d1ED162a22C944756011EDf5cb0061"
+	GethURL                   = "http://43.136.22.7:8545"
+	TCP                       = "tcp"
+	UserServiceAddr           = ":9000"
+	ArtworkServiceAddr        = ":11000"
+	FileServiceAddr           = ":12000"
+	ETCDAddress               = "43.136.22.7:2379"
+	CollectionTokenSOlAddress = "0xc76d37b7EfA2A1b1Dc4eC4B70EfC9bC7FF0EA2Fe"
 	//MinerAddress 合约发布者的地址
-	MinerAddress  = "0x721d8bf469ea9053210631eda4a6b0c4857b6df1"
+	MinerAddress  = "0x16e27c766f8dE98863edc4F73F6Dcb0635ef6017"
 	MinerName     = "auth"
 	MinerPassword = "123456"
 	ChainID       = 12345

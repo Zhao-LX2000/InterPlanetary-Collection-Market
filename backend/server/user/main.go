@@ -27,7 +27,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	addr, err := net.ResolveTCPAddr(consts.TCP, consts.UserServiceAddr)
+	ip, err := consts.GetOutBoundIP()
+	if err != nil {
+		panic(err)
+	}
+	addr, err := net.ResolveTCPAddr(consts.TCP, ip+consts.UserServiceAddr)
 	if err != nil {
 		panic(err)
 	}

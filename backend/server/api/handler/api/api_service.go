@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/IPAM/kitex_gen/artwork"
+	ipamfile "github.com/IPAM/kitex_gen/file"
 	testuser "github.com/IPAM/kitex_gen/testUser"
 	consts2 "github.com/IPAM/pkg/consts"
 	"github.com/IPAM/pkg/errno"
@@ -363,4 +364,158 @@ func UploadFile(ctx context.Context, c *app.RequestContext) {
 	}
 
 	c.JSON(consts.StatusOK, j)
+}
+
+// UploadCollection .
+// @router /v1/file/UploadCollection [POST]
+func UploadCollection(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.UploadCollectionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+	strinUrl := "http://127.0.0.1:4006/api/v0/add?stream-channels=true&pin=false&progress=true&wrap-with-directory=true"
+	payLoad, exists := c.Get(consts2.IdentityKey)
+	if !exists {
+		fmt.Println("name damn fucking not exit")
+		SendResponse(c, nil, nil)
+	}
+	m := payLoad.(map[string]string)
+	aut := m[consts2.AccountName]
+	client := http.Client{}
+	bodyBuf := &bytes.Buffer{}
+	bodyWrite := multipart.NewWriter(bodyBuf)
+	file, _ := c.FormFile("file")
+
+	open, err := file.Open()
+	fileWrite, err := bodyWrite.CreateFormFile("file", file.Filename)
+	_, err = io.Copy(fileWrite, open)
+	if err != nil {
+		log.Println("err")
+	}
+	bodyWrite.Close() //要关闭，会将w.w.boundary刷写到w.writer中
+	// 创建请求
+	req2, err := http.NewRequest(http.MethodPost, strinUrl, bodyBuf)
+	if err != nil {
+		log.Println("err")
+	}
+	// 设置头
+	contentType := bodyWrite.FormDataContentType()
+	req2.Header.Set("Content-Type", contentType)
+	resp, err := client.Do(req2)
+	if err != nil {
+		log.Println("err")
+	}
+	defer resp.Body.Close()
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("err")
+	}
+	a := string(b)
+	fmt.Println(a)
+	start := strings.LastIndex(a, "{")
+	//end := strings.LastIndex(a, "}")
+	a = a[:start]
+	start = strings.LastIndex(a, "{")
+	end := strings.LastIndex(a, "}")
+	var j Rep
+	strn := a[start : end+1]
+	fmt.Println(strn)
+	err = json.Unmarshal([]byte(strn), &j)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	_, err = rpc.UploadCollection(ctx, &ipamfile.UploadCollectionRequest{
+		Filename:        file.Filename,
+		Authorname:      aut,
+		Owners:          aut,
+		Workname:        req.Collection.Workname,
+		Workdescription: req.Collection.Workdescription,
+		Hash:            j.Hash,
+		Price:           req.Collection.Price,
+	})
+
+	if err != nil {
+		SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+
+	resp4 := new(api.GetCollectionListResponse)
+	resp4.BaseResp = &api.BaseResp{
+		StatusCode: consts.StatusOK,
+	}
+
+	c.JSON(consts.StatusOK, resp4)
+	//resp := new(api.UploadCollectionResponse)
+	//c.JSON(consts.StatusOK, resp)
+}
+
+//func UploadFile2(ctx context.Context, c *app.RequestContext) {
+//
+//	/************************************************************/
+//
+//	//// 连接FTP服务器
+//	//ftpClient, err := ftp.Dial("43.136.22.7:21")
+//	//if err != nil {
+//	//	fmt.Println(err)
+//	//	return
+//	//}
+//	//defer ftpClient.Quit()
+//	//// 登录FTP服务器
+//	//err = ftpClient.Login("ipcmgo", "ipcmgo")
+//	//if err != nil {
+//	//	fmt.Println(err)
+//	//	return
+//	//}
+//	//get, err := http.Get(string(url))
+//	//defer get.Body.Close()
+//	//// 上传文件
+//	//all, err := io.ReadAll(get.Body)
+//	//timestamp := time.Now().Unix()
+//	//t := time.Unix(timestamp, 0)
+//	//tstr := t.Format("2006-01-02 15:04:05")
+//	//nginxfilename := tstr + "-" + file.Filename
+//	//err = ftpClient.Stor(nginxfilename, bytes.NewReader(all))
+//	//if err != nil {
+//	//	fmt.Println(err)
+//	//	return
+//	//}
+//	err = dboperation.AddFile(ctx, []*dboperation.IPFSFile{{
+//		//暂时写死
+//		FileName:        file.Filename,
+//		AuthorName:      aut,
+//		Owners:          aut,
+//		WorkName:        string(workname),
+//		WorkDescription: string(workdescription),
+//		Hash:            j.Hash,
+//		Url:             "http://43.136.22.7/images/" + nginxfilename,
+//		Price:           price,
+//	}})
+//	if err != nil {
+//		log.Println(err.Error())
+//	}
+//
+//	c.JSON(consts.StatusOK, j)
+//}
+
+// GetCollectionListCollection .
+// @router /v1/file/GetCollectionList [GET]
+func GetCollectionListCollection(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.GetCollectionListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+	log.Println("1调用")
+	list, err := rpc.GetCollectionList(ctx, &ipamfile.GetCollectionListRequest{})
+
+	if err != nil {
+		SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+	c.JSON(consts.StatusOK, list.Collections)
 }

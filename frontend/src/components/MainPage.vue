@@ -17,7 +17,7 @@
           <span class="author" style="display: block;">@{{item.authorname}}</span>
           <div class="bottom" style="font-weight: bold;">
             <span>IPC:{{item.price}}</span>
-            <span>{{item.CreatedAt.substring(0, 10)}}</span>
+            <span>{{item.createat.substring(0, 10)}}</span>
           </div>
         </div>
     </el-card>

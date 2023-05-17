@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/IPAM/kitex_gen/artwork/artworkservice"
+	"github.com/IPAM/kitex_gen/file/fileservice"
 	"github.com/IPAM/pkg/consts"
 	"github.com/IPAM/pkg/mw"
-	"github.com/IPAM/server/artwork/dal/geth"
+	"github.com/IPAM/server/file/dal"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -15,9 +15,8 @@ import (
 )
 
 func Init() {
-	//dal.Init()
+	dal.Init()
 	// klog init
-	geth.Init()
 	klog.SetLevel(klog.LevelInfo)
 }
 
@@ -30,21 +29,21 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	addr, err := net.ResolveTCPAddr(consts.TCP, ip+consts.ArtworkServiceAddr)
+	addr, err := net.ResolveTCPAddr(consts.TCP, ip+consts.FileServiceAddr)
 	if err != nil {
 		panic(err)
 	}
 
 	Init()
 
-	svr := artworkservice.NewServer(new(ArtworkServiceImpl),
+	svr := fileservice.NewServer(new(FileServiceImpl),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}),
 		server.WithMuxTransport(),
 		server.WithMiddleware(mw.CommonMiddleware),
 		server.WithMiddleware(mw.ServerMiddleware),
-		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: consts.ArtworkServiceName}),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: consts.FileServiceName}),
 	)
 
 	err = svr.Run()

@@ -13,10 +13,30 @@
 // limitations under the License.
 //
 
-package rpc
+package pack
 
-func Init() {
-	initUser()
-	initArtworkClient()
-	initFile()
+import (
+	"errors"
+	"github.com/IPAM/kitex_gen/file"
+	"github.com/IPAM/pkg/errno"
+	"time"
+)
+
+// BuildBaseResp build baseResp from error
+func BuildBaseResp(err error) *file.BaseResp {
+	if err == nil {
+		return baseResp(errno.Success)
+	}
+
+	e := errno.ErrNo{}
+	if errors.As(err, &e) {
+		return baseResp(e)
+	}
+
+	s := errno.ServiceErr.WithMessage(err.Error())
+	return baseResp(s)
+}
+
+func baseResp(err errno.ErrNo) *file.BaseResp {
+	return &file.BaseResp{StatusCode: err.ErrCode, StatusMessage: err.ErrMsg, ServiceTime: time.Now().Unix()}
 }

@@ -39,7 +39,7 @@ function queryForETHBalance() {
 }
 
 function uploadCollection(CollectionData:any) {
-  return axios.post(`http://localhost:8080/v1/file/upload`, CollectionData, { headers: {
+  return axios.post(`http://localhost:8080/v1/file/UploadCollection`, CollectionData, { headers: {
     "Content-type": "multipart/form-data"
   }})
 }
@@ -103,7 +103,7 @@ function getAIThumbnail(input:string) {
 }
 
 function getAllCollection() {
-  return axios.get(`http://localhost:8080/v1/file/list`)
+  return axios.get(`http://localhost:8080/v1/file/GetCollectionList`)
 }
 
 

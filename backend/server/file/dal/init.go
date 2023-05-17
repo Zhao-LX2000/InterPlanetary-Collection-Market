@@ -13,10 +13,11 @@
 // limitations under the License.
 //
 
-package rpc
+package dal
 
+import "github.com/IPAM/server/file/dal/db"
+
+// Init init dal
 func Init() {
-	initUser()
-	initArtworkClient()
-	initFile()
+	db.Init() // mysql init
 }
