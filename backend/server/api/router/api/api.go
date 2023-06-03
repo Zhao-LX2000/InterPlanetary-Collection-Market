@@ -27,8 +27,8 @@ func Register(r *server.Hertz) {
 		}
 		{
 			_file := _v1.Group("/file", _fileMw()...)
+			_file.POST("/AsqnUploadFile", append(_asqnuploadfileMw(), api.AsqnUploadFile)...)
 			_file.GET("/GetCollectionList", append(_getcollectionlistcollectionMw(), api.GetCollectionListCollection)...)
-			//_file.GET("/GetCollectionList", append(_getcollectionlistcollectionMw(), api.GetFileList)...)
 			_file.POST("/UploadCollection", append(_uploadcollectionMw(), api.UploadCollection)...)
 		}
 		{

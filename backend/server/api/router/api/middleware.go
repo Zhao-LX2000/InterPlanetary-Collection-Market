@@ -66,10 +66,10 @@ func _userMw() []app.HandlerFunc {
 }
 
 func _fileMw() []app.HandlerFunc {
-	//return []app.HandlerFunc{
-	//	// use jwt mw
-	//	mw.JwtMiddleware.MiddlewareFunc(),
-	//}
+	return []app.HandlerFunc{
+		// use jwt mw
+		mw.JwtMiddleware.MiddlewareFunc(),
+	}
 	//TODO 记得改回来 测试用
 	return nil
 }
@@ -113,6 +113,11 @@ func _getcollectionlistcollectionMw() []app.HandlerFunc {
 }
 
 func _uploadcollectionMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _asqnuploadfileMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
