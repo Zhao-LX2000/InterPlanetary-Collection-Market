@@ -14,9 +14,12 @@ import (
 	"github.com/IPAM/pkg/errno"
 	"github.com/IPAM/server/api/dboperation"
 	api "github.com/IPAM/server/api/model/api"
+	"github.com/IPAM/server/api/mq"
+	"github.com/IPAM/server/api/mq/task"
 	"github.com/IPAM/server/api/mw"
 	"github.com/IPAM/server/api/rpc"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	shell "github.com/ipfs/go-ipfs-api"
 	"github.com/jlaffaye/ftp"
@@ -371,23 +374,28 @@ func UploadFile(ctx context.Context, c *app.RequestContext) {
 func UploadCollection(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req api.UploadCollectionRequest
+
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
+
 	strinUrl := "http://127.0.0.1:4006/api/v0/add?stream-channels=true&pin=false&progress=true&wrap-with-directory=true"
 	payLoad, exists := c.Get(consts2.IdentityKey)
 	if !exists {
 		fmt.Println("name damn fucking not exit")
 		SendResponse(c, nil, nil)
 	}
+
 	m := payLoad.(map[string]string)
 	aut := m[consts2.AccountName]
 	client := http.Client{}
 	bodyBuf := &bytes.Buffer{}
 	bodyWrite := multipart.NewWriter(bodyBuf)
 	file, _ := c.FormFile("file")
+
+	//task, err := mq.NewUpFileTask(file)
 
 	open, err := file.Open()
 	fileWrite, err := bodyWrite.CreateFormFile("file", file.Filename)
@@ -518,4 +526,85 @@ func GetCollectionListCollection(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	c.JSON(consts.StatusOK, list.Collections)
+}
+
+// AsqnUploadFile .
+// @router /v1/file/AsqnUploadFile [POST]
+func AsqnUploadFile(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.UploadCollectionRequest
+
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	payLoad, exists := c.Get(consts2.IdentityKey)
+	if !exists {
+		fmt.Println("name damn fucking not exit")
+		SendResponse(c, nil, nil)
+		return
+	}
+
+	m := payLoad.(map[string]string)
+	accountName := m[consts2.AccountName]
+
+	fmt.Println("the accountName is", accountName)
+
+	// 解析上传的文件
+	file, err := c.FormFile("file")
+	if err != nil {
+		fmt.Println("file got wrong")
+		SendResponse(c, nil, nil)
+		return
+	}
+
+	openFile, err := file.Open()
+	defer openFile.Close()
+	bytes, err := io.ReadAll(openFile)
+	if err != nil {
+		fmt.Println("file got wrong when read")
+		SendResponse(c, nil, nil)
+		return
+	}
+
+	task, err := task.NewUpFileTask(bytes, accountName)
+	info, err := mq.Client.Enqueue(task)
+
+	if err != nil {
+		hlog.Info("task Enqueue wrong")
+		SendResponse(c, err, nil)
+		return
+	}
+	log.Printf("enqueued task: id=%s queue=%s", info.ID, info.Queue)
+
+	//open, err := file.Open()
+	//defer open.Close()
+	//
+	//// 读取文件内容
+	//fileBytes, err := ioutil.ReadAll(open)
+	//if err != nil {
+	//	fmt.Println("read file got wrong")
+	//	SendResponse(c, nil, nil)
+	//	return
+	//}
+	//
+	//// 连接到本地 IPFS 节点
+	//sh := shell.NewShell("47.113.179.3:5001")
+	//
+	//// 将文件上传到 IPFS，并获得哈希值
+	//hash, err := sh.Add(bytes.NewReader(fileBytes))
+	//if err != nil {
+	//	fmt.Println("send file got wrong")
+	//	SendResponse(c, nil, nil)
+	//	return
+	//}
+	//
+	//// 可选：将哈希值保存到数据库或返回给客户端
+	//fmt.Println("File uploaded successfully. IPFS hash: ", hash)
+
+	resp := new(api.UploadCollectionResponse)
+
+	c.JSON(consts.StatusOK, resp)
 }

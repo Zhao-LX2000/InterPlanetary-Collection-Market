@@ -47,6 +47,8 @@
 
 ##### /v1/file/UploadCollection
 
+#### /v1/file/AsqnUploadFile(异步上传)
+
 上传新作品
 
 ### Collection Service

@@ -22,7 +22,6 @@ import (
 	testuser "github.com/IPAM/kitex_gen/testUser"
 	"github.com/IPAM/pkg/errno"
 	"github.com/IPAM/server/user/dal/db"
-	"github.com/IPAM/server/user/dal/geth"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"io"
 	"log"
@@ -48,7 +47,7 @@ func (s *CreateUserService) CreateUser(req *testuser.CreateUserRequest) error {
 	}
 
 	//生成keystore
-	ks := keystore.NewKeyStore("/mnt/f/key/tmp/"+req.Username, keystore.StandardScryptN, keystore.StandardScryptP)
+	ks := keystore.NewKeyStore("./tmp/"+req.Username, keystore.StandardScryptN, keystore.StandardScryptP)
 
 	account, err := ks.NewAccount(req.Password)
 	if err != nil {
@@ -74,8 +73,8 @@ func (s *CreateUserService) CreateUser(req *testuser.CreateUserRequest) error {
 	fmt.Println("the hex is ", account.Address.Hex())
 	fmt.Println("the string is ", account.Address.String())
 
-	err = geth.CollectionTokenService.MineTokenForAccount(account.Address.Hex())
-	err = geth.OriginService.MineEthForAccount(account.Address.Hex())
+	//err = geth.CollectionTokenService.MineTokenForAccount(account.Address.Hex())
+	//err = geth.OriginService.MineEthForAccount(account.Address.Hex())
 
 	return err
 }

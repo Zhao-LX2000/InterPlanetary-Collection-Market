@@ -21,16 +21,6 @@ struct Collection {
     5: i64 price
 }
 
-//struct Note {
-//    1: i64 note_id
-//    2: i64 user_id
-//    3: string username
-//    4: string user_avatar
-//    5: string title
-//    6: string content
-//    7: i64 create_time
-//}
-
 struct CreateUserRequest {
     1: string username (api.form="username", api.vd="len($) > 0")
     2: string password (api.form="password", api.vd="len($) > 0")
@@ -118,12 +108,8 @@ service ApiService {
 
     UploadCollectionResponse UploadCollection(1: UploadCollectionRequest req) (api.post="/v1/file/UploadCollection")
 
+    UploadCollectionResponse AsqnUploadFile(1: UploadCollectionRequest req) (api.post="/v1/file/AsqnUploadFile")
+
     GetCollectionListResponse GetCollectionListCollection(1: GetCollectionListRequest req)(api.get="/v1/file/GetCollectionList")
-//    CreateNoteResponse CreateNote(1: CreateNoteRequest req) (api.post="/v1/note")
-//    QueryNoteResponse QueryNote(1: QueryNoteRequest req) (api.get="/v1/note/query")
-//    UpdateNoteResponse UpdateNote(1: UpdateNoteRequest req) (api.put="/v1/note/:note_id")
-//    DeleteNoteResponse DeleteNote(1: DeleteNoteRequest req) (api.delete="/v1/note/:note_id")
-//
-//    CreateNoteAndUserResponse CreateNoteAndUser(1: CreateNoteAndUserRequest req) (api.post="/v1/test")
 
 }

@@ -28,6 +28,7 @@ func (s *UploadCollectionService) UploadCollection(req *file.UploadCollectionReq
 		return err
 	}
 	defer ftpClient.Quit()
+
 	// 登录FTP服务器
 	err = ftpClient.Login("ipcmgo", "ipcmgo")
 	if err != nil {
@@ -36,6 +37,7 @@ func (s *UploadCollectionService) UploadCollection(req *file.UploadCollectionReq
 	}
 	get, err := http.Get(req.Url)
 	defer get.Body.Close()
+
 	// 上传文件
 	all, err := io.ReadAll(get.Body)
 	timestamp := time.Now().Unix()
@@ -47,6 +49,7 @@ func (s *UploadCollectionService) UploadCollection(req *file.UploadCollectionReq
 		fmt.Println(err)
 		return err
 	}
+
 	err = db.AddFile(s.ctx, []*db.IPFSFile{{
 		FileName:        req.Filename,
 		AuthorName:      req.Authorname,

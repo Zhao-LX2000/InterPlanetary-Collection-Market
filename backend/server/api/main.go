@@ -4,6 +4,7 @@ package main
 
 import (
 	"github.com/IPAM/server/api/dboperation"
+	"github.com/IPAM/server/api/mq"
 	"github.com/IPAM/server/api/mw"
 	"github.com/IPAM/server/api/rpc"
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -18,6 +19,7 @@ func Init() {
 	// hlog init
 	dboperation.Dbinit()
 	hlog.SetLevel(hlog.LevelInfo)
+	mq.Init()
 }
 
 func main() {
@@ -37,4 +39,5 @@ func main() {
 	}))
 	register(h)
 	h.Spin()
+
 }
